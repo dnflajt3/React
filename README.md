@@ -1,4 +1,101 @@
 # 202130414 심민우
+## 3월27일(4주차)
+오늘 배운 내용
+  - component는 고유한 로직과 모양을 가진 UI의 일부입니다.
+  - component는 버튼처럼 작을 수도 있고 전체페이지처럼 클 수도 있음
+  - component는 마크업을 반환 하는 javascript 함수
+  - nesting은 css 선택자의 중첩 구조를 생각한다.
+  - react 구동
+    ```javascript
+    npm start
+    ```
+  - 컴포넌트 중첩
+    ```javascript
+    import logo from './logo.svg';
+    import './App.css';
+
+    function MyButton(){
+      return(
+        <button>I'm My button component</button>
+      )
+    }
+
+    export default function App() {
+      return (
+        <div>
+          <h1>Hello React</h1>
+          <MyButton></MyButton>
+        </div>
+      );
+    }
+    ```
+  - export default 키워드는 기본 component 지정
+  - JavaScript 문법임
+  - Named Exports 
+    - 하나의 파일안에 여러개의 component가 있을 때 사용
+    - component 사용하는 쪽에서는 component 정확한 이름을 반드시 명시
+  - Default Exports 
+    - 하나의 파일안에서 하나의 component만 내보내는 경우 사용
+    - 사용하는 쪽에서는 어떤 이름을 사용해도 상관없음.
+  - export 와 import
+    ```javascript
+    export default  function MyButton(){
+      return(
+        <button>I'm My button component</button>
+      )
+    }
+    import MyButton from './MyButton';
+    ```
+  - button lib
+    ```javascript
+      import logo from './logo.svg';
+      import './App.css';
+
+      function Button1(){
+        return(
+          <button>Button1</button>
+        )
+      }
+      function Button2(){
+        return(
+          <button>Button2</button>
+        )
+      }
+      function Button3(){
+        return(
+          <button>Button3</button>
+        )
+      }
+      function Button4(){
+        return(
+          <button>Button4</button>
+        )
+      }
+
+      export {Button1,Button2,Button3,Button4}
+    ```
+  - 앞에서 작성한 코드 JSX
+  - React에서 편의성을 위해 JSX 사용.반드시는 안씀
+  - JSX는 HTML보다 엄격한 문법
+  - <br> 같은거도 태그 닫아야 함
+  - 여러개의 component를 jsx로 반환 가능
+  - 여러개의 component를 <div>...<div> 또는 빈<>...</> wrapping 해줘야 함
+### 스타일 추가하기
+  - React에서는 className으로 CSS 지정
+  - className은 HTML 의 class 속성과 동일한 방식으로 동작
+  - CSS 파일을 추가하는 방법을 규정하지는 않음
+
+### 데이터 표시하기
+  - JSX를 사용하면 자바스크립트에 마크업을 넣을 수 있습니다.
+  - JSX코드 내에서 Javascript로 탈출 하여 변수나 표현식을 사용하는것
+  - 이방법을 Escape Back 이라고 합니다.
+  - {} 중괄호를 사용하여 변수나 표현식 표현
+  - src 속성에 user.imageUrl 변수를 설정하여 이미지 경로 설정 
+  ![ex_screenshot](./file/데이터표시하기.png)
+  - 예제에는 App.js에 Profile component를 작성했지만, 별도의 component로 만들어 보겠습니다.
+  - Profile component가 완성되면 App.js에서 호출하고, 출력을 확인합니다.
+  - 예제에서 style={{}}은 특별한 문법이 아니라,style={}의 중괄호 안에 user 객체를 {}로 표시한 것입니다.
+  ![ex_screenshot](./file/데이터표시하기2.png)
 ## 3월20일(3주차)
 오늘 배운 내용
 ### 구조 및 역할
@@ -57,6 +154,8 @@
 - React 사이트에서 접속  
 
   ```javascript
+
+
   function MyButton() {
     return (
       <button>
