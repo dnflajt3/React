@@ -96,6 +96,50 @@
   - Profile component가 완성되면 App.js에서 호출하고, 출력을 확인합니다.
   - 예제에서 style={{}}은 특별한 문법이 아니라,style={}의 중괄호 안에 user 객체를 {}로 표시한 것입니다.
   ![ex_screenshot](./file/데이터표시하기2.png)
+  - profile 만들기    
+
+    ```javascript
+    import "./Profile.css";
+    const user = {
+        name: 'Hedy Lamarr',
+        imageUrl: 'https://i.imgur.com/yXOvdOSs.jpg',
+        imageSize: 90,
+      };
+      
+      export default function Profile() {
+        return (
+          <>
+            <div className="main"> 
+            <h1>{user.name}</h1>
+            <img
+              className="avatar"
+              src={user.imageUrl}
+              alt={'Photo of ' + user.name}
+              style={{
+                width: user.imageSize,
+                height: user.imageSize
+              }}
+            />
+            </div>
+          </>
+        );
+      }
+    ```
+### 조건부 렌더링
+
+  - 일반적인 자바스크립트 코드를 작성할 때 사용하는 것과 동일한 방법을 사용
+
+    ![ex_screenshot](./file/조건부렌더링.png)
+
+### 리스트 렌더링하기
+  - 컴포넌트 리스트를 렌더링 하기 위해서는 for문 및 map()함수 사용
+  - <li>에 key속성 이있음
+  - 목록을 사용할때는 각 항목에 대해
+  고유하게 식별하는 문자열 또는 숫자전달해야함
+  - 항목을 삽입,삭제 또는 재정렬할 때 key를 사용
+  - 이것을 key props라고 함.
+  ![ex_screenshot](./file/리스트렌더링.png)
+
 ## 3월20일(3주차)
 오늘 배운 내용
 ### 구조 및 역할
