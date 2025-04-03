@@ -1,4 +1,102 @@
 # 202130414 심민우
+## 4월3일(5주차)
+오늘 배운 내용
+### 이벤트에 응답하기
+  - component 내부에 event handler 함수를 선언하면 event에 응답 할 수 있습니다.
+  - onClick ={handleClick}의 끝에 소괄호() 가 없는것을 주목
+  - 함수를 호출하지 않고 전달만
+  - 버튼을 클릭할때 이벤트 핸들러를 호출
+  - 만들어보기
+    ```javascript
+    import logo from './logo.svg';
+    import './App.css';
+
+    export default  function MyButton(){
+      function handleClick(){
+        alert("You clicked me!");
+      }
+      return(
+        <button onClick={handleClick}>I'm My button component</button>
+      )
+    }
+
+    ```
+### 화면 업데이트하기
+  - 특정 정보를 기억해 두었다가 표시
+  - 버튼이 클릭된 횟수
+  - component에 state를 추가
+  - useState를 import
+  - 이코드를 보면 useState는 react 파일 안에 named Exports로 선언되어있는 여러개의 component 중 하나
+  - ![ex_screenshot](./file/useState.png)
+  - 이제 comonent내부에 state 변수를 선언
+  - useState로부터 현재의 state를 저장할 수 있는 변수인 count와 이를 업데이트 할 수 있는 함수인 setCount를 얻을 수 있습니다.
+  - 이름은 자유롭게 지정할 수 있지만[someting,setSomething]으로 작성하는 것이 일반적.
+  - 변수 이름과 변수 이름 앞에 set을 붙인 업데이트 함수를 관용적으로 사용
+  - [실습]
+    - 버튼이 처음 표시될 때는 useState()에 0을 전달했기때문에 count가 0이 됨.
+    - state를 변경하고 싶다면 setCount()를 실행하고 새 값을 전달
+    - 이 버튼을 클릭하면 카운터가 증가
+    - ![ex_screenshot](./file/useState2.png)
+
+### Hook 사용하기
+  - use로 시작하는 함수를 Hook이라고 합니다.
+  - useState는 React에서 제공하는 내장 Hook입니다.
+  - 다른 내장 Hook은 API 참고서에서 찾아볼 수 있습니다.
+  - 또한 기존의 것들을 조합하여 자신만의 Hook을 작성할 수도 있습니다.
+  - Hook은 다른 함수보다 더 제한적입니다.
+  예를 들면...
+  - component 또는 다른 Hook의 상단에서만 Hook을 호출
+  - 조건이나 반복문에서 useState를 사용하고 싶다면 새 컴포넌트를 추출하여 그곳에 넣으세요.
+
+### Hook의 사용규칙
+  - React 함수형 component 또는 사용자 Hook 내부에서만 사용가능
+  - 일반적인 javascript 함수에서 useState,uesEffect 등의 Hook을 사용 할 수 없습니다.
+  ```javascript
+  function notAComponent(){
+    useState(0); // 일반 함수에서 Hook 사용 불가
+  }
+  ```
+  ```javascript
+    const [count,setCount]=useState(0); // react 함수 컴포넌트에서 사용가능
+  ```
+
+### function component vs class component
+  - 왜 요즘은 function형 component를 주로 사용할까
+  - 인터넷 찾다보면 class가 많이 나옴
+  - React의 역사
+    - react 초창기  ( 2013~2014 )
+      - 함수형 컴포넌트는 존재했지만 단순히 props를 받아 UI 반환하는 역할만 가능
+      - 상태나 생명주기기능이 없었음
+      - 그래서 주로 class형으로 사용함
+    - React 16.8 (2019) -> Hooks 도입
+      - useState,uesEffect 등의 Hook이 추가되면서 , 함수형 component에서도 상태관리 생명주기 기능을 구현할 수 있게 됨.
+      - 이후 React 공식 문서에서도 함수형 컴포넌트와 hook 사용을 권장하게 됨
+
+### component 간 데이터 공유
+  - 공식문서에서는 MyButton과 MyApp을 계속 수정해가면서 설명중이라 이전 상태 확인이 어려움.
+  - 물론 변경이 있을 때마다 꼼꼼히 commit을 해두면 checkout을 통해서 확인이 가능
+  - 다만 이경우 checkout을 반복해야하기 때문에 확인하는데 불편
+  - 따라서 실습은 별도의 component 만들어 사용
+  - 하지만 데이터를 공유하고 항상 함께 업데이트 하기 위한 component가 필요한 경우가 많습니다.
+  - 두개의 CountState2 component가 동일한 countd를 표시하고 함께 업데이트 하려면
+  state를 개별 버튼에서 모든 버튼이 포함된 가장 가까운 component 안으로 이동해야 합니다.
+  - 여기서 이야기하는 제일 가까운 component는 App component입니다.
+  - ![ex_screenshot](./file/component간데이터공유.png)
+  - 두 버튼중 하나를 클릭하면 App의 count가 변경되어 ,CountState2의 count가 모두변경되게 해보도록 하겠습니다.
+  -먼저 App 안으로 useState를 이동하고, CountState2를 2개 이상 rendering 합니다.
+  - ![ex_screenshot](./file/component간데이터공유2.png)
+  - 다음으로 공유된 click handler와 count를 각 CountState2로 전달합니다.
+  - JSX 중괄호를 사용하여 CountState2에 정보를 전달 할 수 있습니다.
+  - 이렇게 component에 전달하는 정보를 props라고 합니다.
+  - ![ex_screenshot](./file/component간데이터공유3.png)
+  - 마지막으로 parent component인 App에서 전달한 props를 읽을 수 있도록 CounterState component를 변경합니다.
+  - 동작 과정
+    1. 버튼을 클리갛면 onClick 핸들러가 실행됨 왜냐면 각 버튼의 onClick prop은 App 내부의 handleClick 함수로 설정되어 있기 때문입니다.
+    2. 이 코드는 setCount(count+1)을 실행시켜 countState변수를 증가시킵니다.
+    3. 새로운 count 값은 각 버튼에 prop로 전달되기 때문에 모든 번튼에는 새로운 값이 
+    표시됩니다.
+    4. 이것을 state 끌어올리기 라고 합니다.
+    5. state를 위로 이동함으로써 컴포넌트 간에 State를 공유하게 됩니다.
 ## 3월27일(4주차)
 오늘 배운 내용
   - component는 고유한 로직과 모양을 가진 UI의 일부입니다.
@@ -91,11 +189,11 @@
   - 이방법을 Escape Back 이라고 합니다.
   - {} 중괄호를 사용하여 변수나 표현식 표현
   - src 속성에 user.imageUrl 변수를 설정하여 이미지 경로 설정 
-  ![ex_screenshot](./file/데이터표시하기.png)
+  - ![ex_screenshot](./file/데이터표시하기.png)
   - 예제에는 App.js에 Profile component를 작성했지만, 별도의 component로 만들어 보겠습니다.
   - Profile component가 완성되면 App.js에서 호출하고, 출력을 확인합니다.
   - 예제에서 style={{}}은 특별한 문법이 아니라,style={}의 중괄호 안에 user 객체를 {}로 표시한 것입니다.
-  ![ex_screenshot](./file/데이터표시하기2.png)
+  - ![ex_screenshot](./file/데이터표시하기2.png)
   - profile 만들기    
 
     ```javascript
