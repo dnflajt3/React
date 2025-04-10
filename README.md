@@ -1,8 +1,91 @@
 # 202130414 심민우
+## 4월10일(6주차)
+오늘 배운 내용
+### props를 통해 데이터 전달하기
+  - 재사용할 수 있는 component 만들기
+
+  - Board component를 만들고 square component의 내용을 복사
+  - square component의 button을 하나만 남기고 모두 삭제
+  - board component의 button을 square component로 교체합니다.
+  - App에서 호출하는 component를 square에서 Board로 바꿔줍니다.
+  - 여기까지 하면 component는 깔끔하게 정리됐지만 , 숫자 출력이 1만 나오게 됩니다.
+  - 이 문제를 해결하기위해 props를 사용하여 각 사각형이 가져야 할 값을 부모에서 자식으로 전달하겠습니다.
+  - square component를 value prop을 전달 받을 수 있도록 수정합니다.
+    ```javascript 
+    function square({value}){
+      return <button className="square">1</button>
+    }
+    ```
+  - javascript 변수가 렌더링 되어야 합니다.
+  - javascript로 탈출 하려면 중괄호가 필요합니다. JSX에서 value 주위에 중괄호를 추가합니다
+    ```javascript 
+    function square({value}){
+      return <button className="square">{value}</button>
+    }
+    ```
+### 사용자와 상호작용하는 컴포넌트 만들기
+  - Square 컴포넌트를 클릭하면 x로 채워지게 코드수정
+
+  - 먼저 Square 내부에 handleClick 함수를 선언
+  - JSX 버튼의 props에 onClick을 추가
+  - 사각형 클릭시 탭에 clicked 라는 로그가 표시됨.
+  - 다음으로 사각형 컴포넌트가 클릭된 것을 기억 하고 X 표시로 채워보겠습니다.
+  - 컴포넌트는 무언가 기억하기위해 state를 사용합니다.
+  - react는 상태기억을 위해 useState라는 Hook을 제공합니다.
+  - square의 현재 값을 state에 저장 하고 square가 클릭하면 값이 변경되도록 하겠습니다.
+  - 파일 상단에서 useState를 import 합니다.
+  - Square 컴포넌트에서 value prop 을 제거합니다. 대신 useState를 사용합니다.
+  - Square 컴포넌트의 시작 부분에 useState를 호출하고, value라는 이름의 state변수를
+  반환하도록 하세요.
+    ```javascript
+        import {useState} from 'react'
+        function Square(){
+          const [value,setValue]=useState(null);
+          ...        
+        }
+    ```
+  - value는 값을 저장하는 변수,setValue는 값을 변경하는 데 사용하는 함수입니다.
+  - useState에 전달된 null은 이 state변수의 초기값입니다.
+  - 앞에서 Square 컴포넌트는 더이상 props를 사용하지 않게 수정
+  - 따라서 Board 컴포넌트가 생성한 9개의 컴포넌트에서 value prop을 제거합니다.
+  - ![ex_screenshot](./file/사용자와%20상호작용.png)
+### state 끌어올리기
+  - 현재 각 Square 컴포넌트는 게임 state의 일부를 기억합니다.
+
+  - 틱택토 게임에서 승자를 확인하려면 Board가 9개의 Square 컴포넌트 각각의 state를 기억
+  - Board가 각각의 Square에 state를 요청하는것은 기술적으로는 가능하지만,
+  코드가 이해하기 어렵고 버그에 취약하며 리팩토링하기 어렵기 때문에 권장하지 않습니다.
+  - 가장 좋은 방법은 게임의 state를 각 Square가 가아닌 부모 컴포넌트인 Board 에 저장하는 것입니다.
+  - 숫자를 전달햇을때와 같이 prop를 전달하여 각 Square에 표시할 내용을 정할 수 있습니다.
+  - 여러 자식 컴포넌트에서 데이터를 수집하거나 두자식 컴포넌트가 서로 통신하도록 하려면, 부모 컴포넌트에서 공유 state를 선언해야 합니다.
+  - 부모 컴포넌트는 props를 통해 해당 state를 자식 컴포넌트에 전달할 수 있습니다.
+  - 이렇게하면 자식컴포넌트가 서로 동기화 되고, 부모 컴포넌트와도 동기화되도록 할 수 있습니다.
+  - 부모컴포넌트로 state를 끌어올리는 것은 많이 사용하는 방법입니다.
+  - Board 컴포넌트를 편집해서 9개 Square에 해당하는 9개의 null의 배열을 기본값으로 하는 state변수  squares 선언
+    ```javascript
+        const [squares,setSquares]-useState(Array(9).fill(null));
+    ```
+  - 배열의 각 항목은 각 Square 컴포넌트의 값에 해당합니다.
+  - 보드를 채우면 squares 배열은 다음과 같은 모양이 됩니다.
+    ```javascript
+        ['o',null,'x','o',null,'x','o',null,'x']
+    ```
+### component 분리하기
+  - Board component가 export default 로 선언된 것을 보면 component가 분리되었다는것을 알 수 있습니다.
+
+  - 우리는 모두 분리해서 만듬.
+  - [ 분리 순서 ]
+    1. component이름과 동일한 파일을 만듭니다.
+    2. 해당 파일에 코드를 복사하고 export default 키워드 추가
+    3. 필요한 component와 useState를 추가
+    4. App.js에서 해당 코드를 삭제하고, Board Component를 import 해줌
+    5. App.js 에서 useState의 import를 제거합니다.
+    6. 정상적으로 동작하는지 확인.
 ## 4월3일(5주차)
 오늘 배운 내용
 ### 이벤트에 응답하기
   - component 내부에 event handler 함수를 선언하면 event에 응답 할 수 있습니다.
+
   - onClick ={handleClick}의 끝에 소괄호() 가 없는것을 주목
   - 함수를 호출하지 않고 전달만
   - 버튼을 클릭할때 이벤트 핸들러를 호출
@@ -21,8 +104,57 @@
     }
 
     ```
+    ```javascript
+    import { useState } from 'react';
+    import './App.css';
+
+    function Board(){
+      return (
+        <div>
+          <div className='board-row'>
+            <Square></Square>
+            <Square></Square>
+            <Square></Square>
+          </div>
+          <div className='board-row'>
+            <Square></Square>
+            <Square></Square>
+            <Square></Square>
+          </div>
+          <div className='board-row'>
+            <Square></Square>
+            <Square></Square>
+            <Square></Square>
+          </div>
+        </div>
+      )
+    }
+
+    function Square(){
+      const [value,setValue]=useState(null);
+      function handleClick(){
+        setValue('X');
+      }
+      return (
+        <div>
+          <button className='square' onClick={handleClick}>{value}</button>
+        </div>
+      )
+    }
+
+
+    export default function App() {
+      return (
+        <div>
+          <h1>Tic Tac Toe</h1>
+          <Board></Board>
+        </div>
+      );
+    }
+    ```
 ### 화면 업데이트하기
   - 특정 정보를 기억해 두었다가 표시
+
   - 버튼이 클릭된 횟수
   - component에 state를 추가
   - useState를 import
@@ -62,6 +194,7 @@
 
 ### function component vs class component
   - 왜 요즘은 function형 component를 주로 사용할까
+
   - 인터넷 찾다보면 class가 많이 나옴
   - React의 역사
     - react 초창기  ( 2013~2014 )
@@ -74,6 +207,7 @@
 
 ### component 간 데이터 공유
   - 공식문서에서는 MyButton과 MyApp을 계속 수정해가면서 설명중이라 이전 상태 확인이 어려움.
+
   - 물론 변경이 있을 때마다 꼼꼼히 commit을 해두면 checkout을 통해서 확인이 가능
   - 다만 이경우 checkout을 반복해야하기 때문에 확인하는데 불편
   - 따라서 실습은 별도의 component 만들어 사용
@@ -100,6 +234,7 @@
 ## 3월27일(4주차)
 오늘 배운 내용
   - component는 고유한 로직과 모양을 가진 UI의 일부입니다.
+
   - component는 버튼처럼 작을 수도 있고 전체페이지처럼 클 수도 있음
   - component는 마크업을 반환 하는 javascript 함수
   - nesting은 css 선택자의 중첩 구조를 생각한다.
@@ -128,6 +263,7 @@
     }
     ```
   - export default 키워드는 기본 component 지정
+
   - JavaScript 문법임
   - Named Exports 
     - 하나의 파일안에 여러개의 component가 있을 때 사용
@@ -180,6 +316,7 @@
   - 여러개의 component를 <div>...<div> 또는 빈<>...</> wrapping 해줘야 함
 ### 스타일 추가하기
   - React에서는 className으로 CSS 지정
+
   - className은 HTML 의 class 속성과 동일한 방식으로 동작
   - CSS 파일을 추가하는 방법을 규정하지는 않음
 
@@ -231,6 +368,7 @@
 
 ### 리스트 렌더링하기
   - 컴포넌트 리스트를 렌더링 하기 위해서는 for문 및 map()함수 사용
+
   - <li>에 key속성 이있음
   - 목록을 사용할때는 각 항목에 대해
   고유하게 식별하는 문자열 또는 숫자전달해야함
@@ -244,6 +382,7 @@
   - ![ex_screenshot](./file/화면%20캡처%202025-03-20%20143744.png)
   - node modules
     - 초기 node module 및 새로 설치하는 패키지가 저장됩니다.
+
     - 초기파일 37.352 / 폴더 4.597 / 용량은 200MB로 엄청난 양의 파일이 존재 합니다.
   - src/App.js
     - 메인 component로 필요한 sub component를 모아서 관리합니다.
@@ -257,6 +396,7 @@
     - 전역 스타일을 정의하는 스타일 파일입니다.
 ### 의존성 관리와 package.json
   - package.json은 패키지의 의존성을 관리하는 파일입니다.
+
   - 의존성(Dependency) 이란 , 하나의 소프트웨어가 다른 소프트웨어(라이브러리, 패키지, 모듈 등)에 의존하여 동작하는 관계를 말합니다.
   - 즉, 어떤 프로젝트에 사용된 각종 패키지 등의 버전을 동일하게 유지하기 위한 것입니다.
   - 협업을 할 때는 팀원들 각자의 컴퓨터에 같은 패키지들을 설치해서 동일한 개발환경을 구성해야 합니다.
@@ -340,17 +480,21 @@
   ```
 ### full-stack App 개발을 도와주는 React Framework
 - React는 라이브러리기때문에 component 조합은 되지만, 라우팅 및 데이터 가져오기 방법 등을 규정하지는 않습니다.
+
 - React로 전체앱을 빌드하려면 Next.js 또는 Remix 같은 full-stack React Framework를 사용하는 것이 좋습니다.
 - 이를 구현하는 Framework를 사용하면, 서버에서 실행되거나 빌드 중에도 비동기 component에서 데이터를 가져올 수도 있습니다.
 ### 모든 플랫폼에서 최고의 성능을 발휘하는 React
 - 각 플랫폼의 고유한 강점을 활용하여 모든 플랫폼 잘 어울리는 인터페이스 구현 가능
+
 - [웹의 본질에 충실하기]
   - 빠르게 로드되기를 기대
+
   - 데이터를 가져오는 동안에도 html 스트림 시작 가능, javascript 코드가 로드되기 전에 콘텐츠를 점진적으로 채울 수 있음
   - 클라이언트 측에서는 표준 웹API를 사용해서 렌더링 도중에도 UI를 반응하도록 할 수 있습니다.
   - 빠른 렌더링 도와줌
 - [진정한 네이티브 UX를 실현]
   - 자신의 플랫폼과 같은 모양과 느낌
+
   - React Native 와 Expo를 사용하면 Android,IOS 등을 위한 앱을 React로 빌드 가능
   - 네이티브처럼 보이는 이유는 UI가 네이티브임
   - webview가 아니라 Android 및 IOS view를 사용하기 때문임.
@@ -361,13 +505,15 @@
 ### node.js의 장단점
 - 장점 
   - 비동기 논 블로킹 I/O로 높은 성능 제공   
+
   - javascript 풀스택 개발이 가능하며 생산성이 향상됨   
   - npm의 방대한 생태계를 활용 가능   
   - 경량 서버 개발에 적합   
   - 실시간 데이터 처리가 강력함   
    
 - 단점  
-  - CPU 집약적인 작업에 부적합 : 싱글 스레드 기반이라 멀티스레딩 성능이 부족함   
+  - CPU 집약적인 작업에 부적합 : 싱글 스레드 기반이라 멀티스레딩 성능이 부족함  
+
   - 콜백지옥 문제 : 해결책으로 async/await와 Promise 사용 
 
 ### React 프로젝트 생성
@@ -375,10 +521,12 @@
 
 ### React 서버구동 및 서버중지
   - 서버시작 : npm start   
+
   - 서버중지 : ctrl+c
 
 ### React Project 의 구조 및 역할
   - node modules
+
   - public/ : 정적 static 파일을 저장하는 폴더로 , 빌드 시 그대로 유지됨
   - src/:React 앱의 주요 코드가 위치하는 폴더
     - app.js : 메인 컴포넌트

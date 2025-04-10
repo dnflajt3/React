@@ -1,19 +1,13 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
-
-function Square(){
-  return (
-    <div>
-      <div className=''></div>
-    </div>
-  )
-}
+import Board from './Board';
 
 
 export default function App() {
   return (
     <div>
       <h1>Tic Tac Toe</h1>
+      <Board></Board>
     </div>
   );
 }
