@@ -1,4 +1,241 @@
 # 202130414 심민우
+## 4월18일(8주차)
+오늘 배운 내용
+### 한 번 더 state 끌어올리기
+  - xIsNext,currentSquares,handlePlay를 Board 컴포넌트에 props로 전달
+  - Board 컴포넌트가 props에 의해 완전히 제어되도록 만들겠습니다.
+
+
+  11. Board가 xIsNext,squares,onPlay 함수를 props로 받을 수 있도록 함
+  12. useState 호출하는 처음 두줄을 제거함
+
+  13. 이제 Board 컴포넌트의 handleClick에 있는 setSqaures 및 setIsNext 호출을 새로운 onPlay 함수에 대한 단일 호출로 대체함
+  - 게임이 다시 작동하려면 handlePlay를 구현해야 함
+
+  - 이제는 업데이트된 squares 배열을 onPlay로 전달
+  - handlePlay함수는 더이상 호출할수 있는 setSquares 함수가 없음
+  - 대신 이 정보를 저장하기 위해 history state 변수를 사용하고있음
+  - 업데이트된 suqares 배열을 새 히스토리 항목으로 추가하여 history를 업데이트 해야 하고 board에서 했던 것처럼 xIsNext 값을 반전시켜야 함
+  - 앞에서 [...history, nextSquares]는 history에 있는 모든 항목을 포함하는 새배열을 만들고 그 뒤에 nextSquares를 만듭니다.
+  - ...history 전개구문을 사용해 history의 모든 항목 열거로 읽을 수 있습니다.
+  - 예를 들어, history가 [[null,null,null], ["X",null,null]]이고 nextSquares 가 ["X",null,"O"]라면 새로운 [...history, nextSquares] 배열은 [[null,null,null], ["X",null,null], ["X",null,"O"]]가 될 것입니다.
+  - 이 시점에서 state를 Game 컴포넌트로 옮겼으므로 리팩토링 전과 마찬가지로 UI가 완전히 작동해야 합니다. 이 시점에서 코드의 모습은 다음과 같습니다.
+    ```javascript
+    import { useState } from 'react';
+    function Square({ value, onSquareClick }) {
+      return (
+        <button className="square" onClick={onSquareClick}>
+          {value}
+        </button>
+      );
+    }
+
+    function Board({ xIsNext, squares, onPlay }) {
+      function handleClick(i) {
+        if (calculateWinner(squares) || squares[i]) {
+          return;
+        }
+        const nextSquares = squares.slice();
+        if (xIsNext) {
+          nextSquares[i] = 'X';
+        } else {
+          nextSquares[i] = 'O';
+        }
+        onPlay(nextSquares);
+      }
+
+      const winner = calculateWinner(squares);
+      let status;
+      if (winner) {
+        status = 'Winner: ' + winner;
+      } else {
+        status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+      }
+
+      return (
+        <>
+          <div className="status">{status}</div>
+          <div className="board-row">
+            <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
+            <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
+            <Square value={squares[2]} onSquareClick={() => handleClick(2)} />
+          </div>
+          <div className="board-row">
+            <Square value={squares[3]} onSquareClick={() => handleClick(3)} />
+            <Square value={squares[4]} onSquareClick={() => handleClick(4)} />
+            <Square value={squares[5]} onSquareClick={() => handleClick(5)} />
+          </div>
+          <div className="board-row">
+            <Square value={squares[6]} onSquareClick={() => handleClick(6)} />
+            <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
+            <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
+          </div>
+        </>
+      );
+    }
+
+    export default function Game() {
+      const [xIsNext, setXIsNext] = useState(true);
+      const [history, setHistory] = useState([Array(9).fill(null)]);
+      const currentSquares = history[history.length - 1];
+
+      function handlePlay(nextSquares) {
+        setHistory([...history, nextSquares]);
+        setXIsNext(!xIsNext);
+      }
+
+      return (
+        <div className="game">
+          <div className="game-board">
+            <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+          </div>
+          <div className="game-info">
+            <ol>{/*TODO*/}</ol>
+          </div>
+        </div>
+      );
+    }
+
+    function calculateWinner(squares) {
+      const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+          return squares[a];
+        }
+      }
+      return null;
+    }
+    ```
+### 화면이 한 줄로 깨져서 보이는 이유
+  - `<button>` 을 div 로 감싸서 생기는 문제
+
+  - react fragment(<>...</>)로 감싸거나 `<button>` 만 남겨주세요.
+  - react fragment를 사용하면 구조도 깔끔하고 유지보수도 편함.
+
+### 과거 움직임 보여주기
+  - 이제 틱택토 게임의 히스토리를 기록하므로, 플레이어에게 과거 이동 목록을 보여줄 수 있습니다.
+
+  - `<button>` 과 같은 React 엘리먼트는 일반 JavaScript 객체이므로 애플리케이션에서 전달할 수 있습니다.
+  - React에서 여러 엘리먼트를 렌더링하려면 React 엘리먼트 배열을 사용할 수 있습니다.
+  - 이미 state에 이동 history 배열이 있으므로 이를 React 엘리먼트 배열로 변환해야 합니다.
+  - JavaScript에서 한 배열을 다른 배열로 변환하려면 배열 map 메서드를 사용하면 됩니다.
+    ```javascript
+    [1, 2, 3].map((x) => x * 2) // [2, 4, 6]
+    ```
+  1. 플레이 history 배열을 화면의 버튼을 나타내는 React 엘리먼트로 변환합니다.
+
+  2. 과거의 플레이로 "점프" 할 수 있는 버튼목록을 표시하세요
+  3. 이것을 구현하기위해 Game 컴포넌트에서 history를 map을 이용해보겠습니다.
+
+### map 함수의 활용 
+  - 문서의 내용이 어렵게 되어있기 때문에 다시 정리합니다.
+    ```javascript
+      const moves=history.map((squares,move)=>{})
+    ```
+  - map의 기본 구문은 map(callbackFn)혹은 map(callbackFn, thisArg)입니다.
+
+  - thisArg는 내부에서 this로 사용할 값을 지정하는데 화살표 함수에서는 생략됩니다.
+  - 따라서 예제에서는 callbackFn만 사용하고, 화살표 함수가 callback함수를 대신합니다.
+  - squares, move 는 화살표 함수의 매개변수입니다.
+  1. history.map: history는 모든 플레이를 저장하는 배열입니다. 이 history에 map 함수를 적용한다는 의미입니다.
+  2. map함수는 history 각각의 요소 index를 순회하면서 squares 추출합니다.
+  3. 각 요소는 {} 안의 실행문을 실행하면서 버튼을 생성합니다.
+  4. 이렇게 생성된 버튼은 moves 객체(배열)에 다시 저장됩니다.
+  5. move는 최종 rendering에 사용됩니다.
+
+  - 다시 정리하면
+    - 원본배열(history):map이 호출된 원본 배열.
+    
+    - 원본 배열의 인덱스 (move): 현재 순환중인 원본 배열 요소의 인덱스.
+    - 요소 값(squares): 현재 순회 중인 요소 배열의 값.
+  - history.map((squares,move)=>{ ... })는 다음과 같이 동작합니다.
+    - 첫번째 호출 : `squares = [null,null,null,null,null,null,null,null,null], move = 0` 
+
+     - 두번째 호출 : `squares =['x',null,null,null,null,null,null,null,null], move = 0` 
+    - 세번째 호출 : `squares = ['x','o',null,null,null,null,null,null,null], move = 0` 
+  - 각각의 history 요소에 대한 {}의 실행문(후작업) 실행합니다.
+
+  - moves 객체에 저장합니다.
+  - 최종 출력에 사용합니다.
+
+### KEY 선택하기
+  - 리스트를 렌더링할 때 React는 렌더링 된 각 리스트 항목에 대한 몇 가지 정보를 저장합니다.
+
+  - 리스트를 업데이트 할 때 React는 무엇이 변경되었는지 확인해야합니다.
+  - 리스트의 항목은 추가,제거,재정렬 또는 업데이트 될 수 있습니다.
+  -리스트가 다음과 같이 업데이트가 되었다고 생각해 봅니다.
+  - ![ex_screenshot](./file/key선택하기.png)
+  - 아마 task의 개수가 업데이트 되었을 뿐만 아니라 Alexa 와 Ben의 순서가 바뀌고 Claudia가 두 사람 사이에 추가되었다고 생각할 것입니다.
+  - 그러나 React는 컴퓨터 프로그램이므로 우리가 의도한 바가 무엇인지 알지 못합니다.
+  - 그러므로 리스트의 항목에 key 프로퍼티를 지정하여 각 리스트의 항목이 다른 항목과 다르다는 것을 구별해 주어야 합니다.
+  - 만약 데이터베이스에서 불러온다면 데이터베이스 ID를 key로 사용할 수 있습니다.
+  - ![ex_screenshot](./file/key선택하기.png)
+  - 리스트가 다시 렌더링되면 React는 각 리스트 항목의 key를 가져와서 이전 리스트의 항목에서 일치하는 key를 탐색합니다.
+  - 현재 리스트에서 이전에 존재하지 않았던 key가 있으면 React는 컴포넌트를 생성합니다.
+  - 만약 현재리스트에서 이전리스트가 존재했던 key를 가지고 있지 않다면 React는 그 key를 가진 컴포넌트를 제거합니다.
+  - 두 key가 일치한다면 해당 컴포넌트는 이동합니다.ㅣ
+  - key는 각 React가 각컴포넌트를 구별할수있게 합니다.
+  - key는 React에서 특별하게 미리 지정된 프로퍼티입니다.
+  - 엘리먼트가 생성되면 React는 key프로퍼티를 추출하여 반환되는 엘리먼트에 직접 key를 저장합니다.
+  - key가 props로 전달되는것처럼 보일 수 있지만 react는 자동으로 key를 사용해 업데이트할 컴포넌트를 결정합니다.
+  - 부모가 지정한 key가 무엇인지 컴포넌트는 알 수 없습니다.
+  - 동적인 리스트를 만들때마다 key를 할당할 것을 추천합니다.
+  - 적절한 key가 없는경우 데이터의 재구성을 고려해보세요
+  - key가 지정되지않은 경우 React는 경고를 표시하면 배열의 인덱스를 기본 key로 사용합니다.
+  - 배열인덱스를 key로 사용하면 항목의 순서를 바꾸거나 항목을 추가/제거할때 문제가 발생합니다.
+  - 명시적으로 key={i}를 전달하면 경고는 사라지지만 문제가 발생하므로 대부분은 추천하지 않습니다.
+
+### 시간여행 구현하기 -1 
+  - 틱택토 게임의 기록에서 과거의 각 플레이어는 해당 플레이의 일련번호인 고유ID가 있습니다.
+
+  - 플레이는 중간에 순서를 바꾸거나 삭제하거나 삽입할 수 없기 때문에 인덱스를 key로 사용하는 것이 안전합니다.
+  1. Game함수에서 `<li key={move}>`로 key를 추가할 수 있으며, 렌더링 된 게임을 다시 로드하면 React의 "key"에러가 사라질 것입니다.
+
+### 시간여행 구현하기 -2
+  - jumpto를 구현하기 전에 사용자가 현재 어떤 단계를 보고잇는지 추적할 Game컴포넌트의 state가 하나 더 필요합니다.
+
+  1. 이를 위해 기본값이 0인 currentMove 라는 새 state 변수를 정의하세요.
+
+      ```javascript
+      export default function Game() {
+        const [xIsNext, setXIsNext] = useState(true);
+        const [history, setHistory] = useState([Array(9).fill(null)]);
+        const [currentMove, setCurrentMove] = useState(0);
+        const currentSquares = history[history.length - 1];
+        //...
+      }
+      ```
+  2. 다음으로 Game 내부의 jumpTo 함수를 업데이트하여 해당 currentMove를 업데이트하세요
+  3.  또한 currentMove를 변경하는 숫자가 짝수면 xIsNext를 true로 설정하세요.
+
+  - 이제 사각형을 클릭할 때 호출되는 Game의 handlePlay 함수 내용을 두 가지 변경하겠습니다.
+
+  4. 시간을 거슬러 올라가서” 그 시점에서 새로운 이동을 하는 경우 해당 시점까지의 히스토리만 유지해야 합니다. history의 모든 항목(... 전개 구문) 뒤에 nextSquares를 추가하는 대신 history.slice(0, currentMove + 1)의 모든 항목 뒤에 추가하여 이전 히스토리의 해당 부분만 유지하도록 하겠습니다.
+
+  5. 이동할 때마다 최신 히스토리 항목을 가리키도록 currentMove를 업데이트하세요.
+      ```javascript
+      function handlePlay(nextSquares) {
+        const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+        setHistory(nextHistory);
+        setCurrentMove(nextHistory.length - 1);
+        setXIsNext(!xIsNext);
+      }
+      ```
+  6. 마지막으로 항상 마지막 동작을 렌더링하는 대신 현재 선택한 동작을 렌더링하도록 Game 컴포넌트를 수정하겠습니다.
+  [history.length -1 ]-> [currentMove]
+  
+  
+
 ## 4월17일(7주차)
 오늘 배운 내용
 ### state 끌어올리기
@@ -22,39 +259,39 @@
   - ()=>{handleClick(0)}은 화살표 함수로 , 함수를 짧게 정의하는 방법
   - Square가 클릭 되면 => "화살표" 뒤의 코드가 실행되어 handleClick(0)을 호출함
   - handleClick(0) 함수를 화살표 함수가 호출하고, 화살표 함수를 square에 전달함.
-  ```javascript
-  import { useState } from "react";
-  import Square from "./Sqare";
+    ```javascript
+    import { useState } from "react";
+    import Square from "./Sqare";
 
-  export default function Board(){
-    const [squares,setSquares]=useState(Array(9).fill(null));
-    function handleClick(i){
-      const nextSquares=squares.slice();
-      nextSquares[i]="x";
-      setSquares(nextSquares);
+    export default function Board(){
+      const [squares,setSquares]=useState(Array(9).fill(null));
+      function handleClick(i){
+        const nextSquares=squares.slice();
+        nextSquares[i]="x";
+        setSquares(nextSquares);
+      }
+      return (
+        <div>
+          <div className='board-row'>
+            <Square value={squares[0]} onSquareClick={()=>{handleClick(0)}}></Square>
+            <Square value={squares[1]} onSquareClick={()=>{handleClick(1)}}></Square>
+            <Square value={squares[2]} onSquareClick={()=>{handleClick(2)}}></Square>
+          </div>
+          <div className='board-row'>
+            <Square value={squares[3]} onSquareClick={()=>{handleClick(3)}}></Square>
+            <Square value={squares[4]} onSquareClick={()=>{handleClick(4)}}></Square>
+            <Square value={squares[5]} onSquareClick={()=>{handleClick(5)}}></Square>
+          </div>
+          <div className='board-row'>
+            <Square value={squares[6]} onSquareClick={()=>{handleClick(6)}}></Square>
+            <Square value={squares[7]} onSquareClick={()=>{handleClick(7)}}></Square>
+            <Square value={squares[8]} onSquareClick={()=>{handleClick(8)}}></Square>
+          </div>
+        </div>
+      )
     }
-    return (
-      <div>
-        <div className='board-row'>
-          <Square value={squares[0]} onSquareClick={()=>{handleClick(0)}}></Square>
-          <Square value={squares[1]} onSquareClick={()=>{handleClick(1)}}></Square>
-          <Square value={squares[2]} onSquareClick={()=>{handleClick(2)}}></Square>
-        </div>
-        <div className='board-row'>
-          <Square value={squares[3]} onSquareClick={()=>{handleClick(3)}}></Square>
-          <Square value={squares[4]} onSquareClick={()=>{handleClick(4)}}></Square>
-          <Square value={squares[5]} onSquareClick={()=>{handleClick(5)}}></Square>
-        </div>
-        <div className='board-row'>
-          <Square value={squares[6]} onSquareClick={()=>{handleClick(6)}}></Square>
-          <Square value={squares[7]} onSquareClick={()=>{handleClick(7)}}></Square>
-          <Square value={squares[8]} onSquareClick={()=>{handleClick(8)}}></Square>
-        </div>
-      </div>
-    )
-  }
 
-  ```
+    ```
   
   - ![ex_screenshot](./file/tictac.png)
 
@@ -101,24 +338,24 @@
 ### 교대로 두기 - 2
   - ox가 덮어씌워지는 경우가 생기기 때문에 return을 해줌. 
 
-  ```javascript
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
+    ```javascript
+    const [xIsNext, setXIsNext] = useState(true);
+    const [squares, setSquares] = useState(Array(9).fill(null));
 
-  function handleClick(i) {
-    if (squares[i]) {
-      return;
+    function handleClick(i) {
+      if (squares[i]) {
+        return;
+      }
+      const nextSquares = squares.slice();
+      if (xIsNext) {
+        nextSquares[i] = "X";
+      } else {
+        nextSquares[i] = "O";
+      }
+      setSquares(nextSquares);
+      setXIsNext(!xIsNext);
     }
-    const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = "X";
-    } else {
-      nextSquares[i] = "O";
-    }
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
-  }
-  ```
+    ```
 ### 승자 결정하기
   1. 먼저 승리할 수 있는 경우의 자리를 2차원 배열로 선언합니다.
 
@@ -166,25 +403,25 @@
   7. 게임이 끝났을때 플레이어에게 알리기 위해 "winner:x" 또는 "winnder:o" 라고 표시하겠습니다.
   8. 이렇게 하려면 board 컴포넌트에 status구역을 추가하면 됩니다.
   9. 게임이 끝나면 status는 승자를 표시하고, 게임이 진행 중인 경우 다음 플레이어의 차례를 표시합니다.
-  ```javascript
-    export default function Board() {
-    // ...
-      const winner = calculateWinner(squares);
-      let status;
-      if (winner) {
-        status = "Winner: " + winner;
-      } else {
-        status = "Next player: " + (xIsNext ? "X" : "O");
-      }
+    ```javascript
+      export default function Board() {
+      // ...
+        const winner = calculateWinner(squares);
+        let status;
+        if (winner) {
+          status = "Winner: " + winner;
+        } else {
+          status = "Next player: " + (xIsNext ? "X" : "O");
+        }
 
-      return (
-        <>
-          <div className="status">{status}</div>
-          <div className="board-row">
-            // ...
-      )
-    }
-  ```
+        return (
+          <>
+            <div className="status">{status}</div>
+            <div className="board-row">
+              // ...
+        )
+      }
+    ```
 ### 시간여행 추가하기
   - 마지막 연습으로 게임의 이전 동작으로 "시간을 거슬러 올라가는" 기능
   - [ 플레이 히스토리 저장하기 ]
@@ -193,17 +430,17 @@
     - 덕분에 squares 배열의 모든 과거 버전을 저장할 수 있고, 이미 발생한 플레이의 내용을 탐색할 수 있습니다.
     - 과거의 squares 배열을 history라는 다른 배열에 저장하고, 이배열을 새로운 state변수로 저장하겠습니다.
     - history 배열은 첫 번째 플레이부터 마지막 플레이까지 모든 보드 state를 나타냅니다.
-    ```javascript
-    [
-      // Before first move
-      [null, null, null, null, null, null, null, null, null],
-      // After first move
-      [null, null, null, null, 'X', null, null, null, null],
-      // After second move
-      [null, null, null, null, 'X', null, null, null, 'O'],
-      // ...
-    ]
-    ```
+      ```javascript
+      [
+        // Before first move
+        [null, null, null, null, null, null, null, null, null],
+        // After first move
+        [null, null, null, null, 'X', null, null, null, null],
+        // After second move
+        [null, null, null, null, 'X', null, null, null, 'O'],
+        // ...
+      ]
+      ```
 
 ### 한 번 더 STATE 끌어올리기
   1. 먼저 export default가 있는 game 컴포넌트 추가
