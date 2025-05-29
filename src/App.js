@@ -28,21 +28,21 @@ export default function App() {
       <h1>Welcome to my app</h1>
       <div>
           <p>Hello React</p>
-          <MyB></MyB><br></br>
-          <Button1></Button1>&nbsp;
-          <Button3></Button3>
-          <Ap></Ap>
-          <Profile></Profile>
-          <ShoppingList></ShoppingList>
+          <MyB/><br></br>
+          <Button1/>&nbsp;
+          <Button3/>
+          <Ap/>
+          <Profile/>
+          <ShoppingList/>
       </div>
       <div>
         <p>Hello State</p>
-        <CountState></CountState>
-        <CountState></CountState>
+        <CountState/>
+        <CountState/>
       </div>
       <div>
         <p>Sharing data between components</p>
-        <CountState2 count={count} onClick={handleClick}></CountState2>
+        <CountState2 count={count} onClick={handleClick}/>
       </div>
     </div>
   );
