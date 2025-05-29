@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+
 import './App.css';
 import MyB from './MyButton';
 import { Button1, Button3 } from './ButtonLib';
