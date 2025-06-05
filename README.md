@@ -1,23 +1,237 @@
 # 202130414 심민우
+
+## 6월5일(14주차)
+
+### 기존 프로젝트에 React 추가하기
+
+[2단계: 페이지 어디에서든 React 컴포넌트 렌더링하기 ]
+
+- 이전 단계에서는 , 메인 메일 파일 최상단에 아래 코드를 넣었습니다.
+
+```javascript
+import { createRoot } from "react-dom/client";
+// 기존 HTML 컨텐츠를 지웁니다.
+document.body.innerHTML = '<div id="app"></div>';
+
+// 대신에 여러분이 작성한 React 컴포넌트를 렌더링합니다.
+const root = createRoot(document.getElementById("app"));
+root.render(<h1>Hello, world</h1>);
+```
+
+- 당연히 실제로는 기존 HTML 콘텐츠를 지우고 싶지 않을 겁니다!
+- 그렇다면 이 코드를 삭제하세요.
+
+- 대신 React 컴포넌트를 HTML의 특정 위치에 렌더링하고 싶을 것입니다.
+- HTML 페이지를 열고(또는 이를 생성하는 서버 템플릿) HTML 태그에 고유한 id 어트리뷰트를 추가하세요.
+- 이렇게 하면 document.getElementById로 HTML 엘리먼트를 찾아 createRoot에 전달함으로써 해당 요소 내부에 React 컴포넌트를 렌더링 할 수 있습니다.
+
+```javascript
+<!-- ... html의 어딘가 ... -->
+<nav id="navigation"></nav>
+<!-- ... 더 많은 html ... -->
+```
+
+### 에디터 설정하기
+
+[에디터 기능 추천]
+
+1. Linting
+
+- 코드 린터는 코드를 작성하는 동안 실시간으로 문제를 찾아 줌으로써 빠른 문제해결이 가능하도록 도와줍니다.
+
+- ESLint는 많이 사용되고 javascript를 위한 오픈소스 린터입니다.
+
+  - React를 위한 추천 설정과 함께 ESLint 설치하기 ( 사전에 Node가 설치되어 있어야 합니다)
+  - Vs Code 의 EsLint를 공식 익스텐션과 통합하기
+
+- 프로젝트의 모든 eslint-plugin-react-hooks 규칙을 활성화햇는지 확인.이규칙은 필수적이며 가장 심각한 버그를 조기에 발견합니다.
+
+2. Formatting
+
+- 다른 개발자들과 협업할 때 가장 피하고 싶은것은 탭 vs 공백에 대한 논쟁일 것입니다.
+
+- 다행히 prettier를 사용하면 직접 지정해 놓은 규칙들에 부합하도록 코드의 형식을 깔끔하게 정리할 수 있습니다.
+- Prettier를 실행하면 모든 탭은 공백으로 전환될 뿐만 아니라 들여쓰기,따옴표 형식과 같은 요소들이 전부 설정에 부합하도록 수정될 것입니다
+- 파일을 저장할 때마다 Prettier가 자동 실행되어 이러한 작업들을 수행해 주는 것이 가장 이상적인 설정입니다.
+- 다음과 같은 단계를 통해 VS Code의 Prettier 익스텐션을 설치할 수 있습니다.
+
+  1. VS Code 실행하기
+
+  2. 퀵오픈 사용하기 (Ctrl/Cmd+P 누르기)
+  3. ext install esbenp.prettier-vscode라고 입력하기
+  4. 엔터 누르기
+
+### TypeScript 사용하기
+
+- TypeScript는 JavaScript 코드 베이스에 타입 정의를 추가하는 데 널리 사용되는 방법입니다.
+
+- 기본적으로 TypeScript는 JSX를 지원하며, @types/react 및 @types/react-dom을 추가하면 완전한 React Web 지원을 받을 수 있습니다.
+  [학습 내용]
+- React 컴포넌트가 있는 TypeScript
+
+- Hooks 타이핑 예시
+- @types/react의 일반적인 타입
+- 추가 학습 위치
+
+- 모든 프로덕션 수준의 React 프레임워크는 TypeScript 사용을 지원합니다. 프레임워크별 설치 가이드를 따르세요.
+- Next.js
+- Remix
+- Gatsby
+- Expo
+
+[기존 React 프로젝트에 TypeScript 추가하기 ]
+
+- 최신 버전의 React 타입 정의를 설치합니다.
+
+`npm install @types/react @types/react-dom`
+
+- 다음 컴파일러 옵션을 tsconfig.json에 설정해야 합니다.
+
+1. dom은 lib에 포함되어야 합니다(주의: lib 옵션이 지정되지 않으면, 기본적으로 dom이 포함됩니다).
+
+2. jsx를 유효한 옵션 중 하나로 설정해야 합니다. 대부분의 애플리케이션에서는 preserve로 충분합니다. 라이브러리를 게시하는 경우 어떤 값을 선택해야 하는지 jsx 설명서를 참조하세요.
+   [ React 컴포넌트가 있는 TypeScript ]
+
+- JSX를 포함하고 있는 모든 파일은 .tsx 파일 확장자를 사용해야 합니다.
+
+- 이는 이 파일이 JSX를 포함하고 있음을 TypeScript에 알려주는 TypeScript 전용 확장자입니다.
+
+- React와 함께 TypeScript를 작성하는 것은 React와 함께 JavaScript를 작성하는 것과 매우 유사합니다.
+- 컴포넌트로 작업할 때 가장 중요한 차이점은 컴포넌트의 props에 타입을 제공할 수 있다는 점입니다.
+- 이러한 타입은 에디터에서 정확성을 검사하고 인라인 문서를 제공하는 데 사용할 수 있습니다.
+- 빠르게 시작하기 가이드에서 가져온 MyButton 컴포넌트를 예로 들어 버튼의 title을 설명하는 타입을 추가할 수 있습니다.
+
+```javascript
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Welcome to my app</h1>
+      <MyButton title="I'm a button" />
+    </div>
+  );
+}
+```
+
+- 이 인라인 문법은 컴포넌트에 타입을 제공하는 가장 간단한 방법이지만, 설명할 필드가 많아지기 시작하면 다루기 어려워질 수 있습니다.
+
+- 대신, interface나 type을 사용하여 컴포넌트의 props를 설명할 수 있습니다.
+
+```javascript
+interface MyButtonProps {
+  /** 버튼 안에 보여질 텍스트 */
+  title: string;
+  /** 버튼이 상호작용할 수 있는지 여부 */
+  disabled: boolean;
+}
+
+function MyButton({ title, disabled }: MyButtonProps) {
+  return <button disabled={disabled}>{title}</button>;
+}
+
+export default function MyApp() {
+  return (
+    <div>
+      <h1>Welcome to my app</h1>
+      <MyButton title="I'm a disabled button" disabled={true} />
+    </div>
+  );
+}
+```
+
+- 컴포넌트의 props를 설명하는 타입은 원하는 만큼 단순하거나 복잡할 수 있지만, type 또는 interface로 설명되는 객체 타입이어야 합니다.
+- TypeScript가 객체를 설명하는 방법에 대해 객체 타입에서 배울 수 있습니다만, 유니언 타입을 사용하여 몇 가지 타입 중 하나가 될 수 있는 prop을 설명하는 것과 더 고급 사용 예시에 대한 타입에서 타입 만들기 가이드 역시 흥미로울 것입니다.
+  [Hooks 예시 ]
+- @types/react의 타입 정의에는 내장 Hooks에 대한 타입이 포함되어 있으므로 추가 설정 없이 컴포넌트에 사용할 수 있습니다.
+- 컴포넌트에 작성한 코드를 고려하도록 만들어졌기 때문에 대부분의 경우 추론된 타입을 얻을 수 있으며,
+- 이상적으로는 타입을 제공하는 사소한 작업을 처리할 필요가 없습니다.
+  [useState ]
+- useState hook은 초기 state로 전달된 값을 재사용하여 값의 타입을 결정합니다. 예를 들어
+
+```javascript
+// 타입을 "boolean"으로 추론합니다
+const [enabled, setEnabled] = useState(false);
+```
+
+- boolean 타입이 enabled에 할당되고, setEnabled 는 boolean 인수나 boolean을 반환하는 함수를 받는 함수가 됩니다. state에 대한 타입을 명시적으로 제공하려면 useState 호출에 타입 인수를 제공하면 됩니다.
+
+```javascript
+// 명시적으로 타입을 "boolean"으로 설정합니다
+const [enabled, setEnabled] = useState < boolean > false;
+```
+
+- 이 경우에는 그다지 유용하지 않지만, 타입 제공을 원하게 되는 일반적인 경우는 유니언 타입이 있는 경우입니다. 예를 들어 여기서 status는 몇 가지 다른 문자열 중 하나일 수 있습니다.
+
+```javascript
+type Status = "idle" | "loading" | "success" | "error";
+
+const [status, setStatus] = useState < Status > "idle";
+```
+
+- 또는 State 구조화 원칙에서 권장하는 대로, 관련 state를 객체로 그룹화하고 객체 타입을 통해 다른 가능성을 설명할 수 있습니다.
+
+```javascript
+type RequestState = { status: "idle" } | { status: "loading" } | { status: "success", data: any } | { status: "error", error: Error };
+
+const [requestState, setRequestState] = useState < RequestState > { status: "idle" };
+```
+
+[useReducer]
+
+- useReducer Hook은 reducer 함수와 초기 state를 취하는 더 복잡한 Hook입니다. reducer 함수의 타입은 초기 state에서 추론됩니다
+- state에 대한 타입을 제공하기 위해 useReducer 호출에 타입 인수를 선택적으로 제공할 수 있지만, 대신 초기 state에서 타입을 설정하는 것이 더 좋은 경우가 많습니다.
+
+#### React1 강의를 끝내며...
+
+- react.dev 에서 제공하는 공식 문서는 크게 getStart 와 learnReact로 구분됩니다.
+- React의 기본 개념이 어렵다면 QuickStart를 다시 한번 학습할 것을 추천합니다.
+- 다 학습했다면LearnReact를 공부
+
+### 1.Github Pages 기본 저장소란?
+
+- Github Pages를 운영하려면 먼저 GitHub Pages 저장소를 생성해야 합니다.
+- 생성 방법은 일반 저장소 생성과 동일하지만, 저장소 이름은 도메인 형태로 해야 합니다.
+- 또한 최상위 도메인 부분은 .com이 아니라 .io로 해야 합니다.
+- GitHub에서 직접 저장소를 만들었다면 clone 해서 local에서 작업하고 push합니다.
+- 처음부터 저장소를 local에 만들었다면 그대로 push합니다. (추천)
+
+- 이 저장소는 Github에서 정적 호스팅을 하기 위해서는 반드시 필요한 저장소입니다.
+- 이후 다른 이름의 저장소도 페이지로 사용할 수 있습니다.단, 페이지로 사용할 저장소가 있다면 설정에서 페이지를 활성화해야합니다.
+- 기본 저장소는 https://<My GitHub ID>.github.io로 외부에서 접속할 수 있습니다.
+- 일반 페이지 저장소는 https://<My GitHub ID>.github.io/<repo-name>으로 접속합니다.
+- 직접 구매한 도메인이 있다면 연결도 가능합니다.
+- Working directory에 프로젝트를 새로 만들고,README.md를 간단히 수정합니다.
+- 프로젝트를 Github로 push합니다. 저장소는 public으로 해야 합니다.
+- Github에서 프로젝트 저장소에서 Settings > Pages의 None을 클릭합니다.
+- Select branch에서 main을 선택하고 , 저장합니다.
+- 1~2분 후에 <id>.github.iio/<repo-name>으로 접속하면 Readme를 확인할 수 있습니다.
+- 현재는 프로젝트를 build하기 전이기 때문에 readme만 확인할 수 있습니다.
+
 ## 5월29일(13주차)
-### 처음부터 React 앱 만들기 
-  - 올바른 경로에 적합한 렌더링 전략을 사용하면 
 
-    - 콘텐츠의 첫 바이트를 로드하는 데 걸리는 시간(첫 번째 바이트까지의 시간),
+### 처음부터 React 앱 만들기
 
-    - 콘텐츠의 첫 번째 부분을 렌더링하는 데 걸리는 시간(첫 번째 콘텐츠 페인트),
-    - 앱에서 가장 큰 표시 콘텐츠를 렌더링한느 데 걸리는 시간(가장 큰 콘텐츠 페인트)을 줄일 수 있음.
+- 올바른 경로에 적합한 렌더링 전략을 사용하면
+
+  - 콘텐츠의 첫 바이트를 로드하는 데 걸리는 시간(첫 번째 바이트까지의 시간),
+
+  - 콘텐츠의 첫 번째 부분을 렌더링하는 데 걸리는 시간(첫 번째 콘텐츠 페인트),
+  - 앱에서 가장 큰 표시 콘텐츠를 렌더링한느 데 걸리는 시간(가장 큰 콘텐츠 페인트)을 줄일 수 있음.
+
 #### 그리고 더 많은 것들...
-  - 지금까지 설명한 것은 새 앱을 처음부터 개발할 때 고려해야 할 기능의 몇가지 예일 뿐임.
 
-  - 각 문제가 서로 밀접하게 연관되어 있고 익숙하지 않은 문제 영역에 대한 심층적인 전문 지식이 필요할 수 있으므로, 직면하게 될 많은 제약은 해결하기 어려울 수 있음.
-  - 이러한 문제를 스스로 해결하고 싶지 않다면, 이러한 기능을 제공하는 프레임워크를 바로 사용할 수 있음.
+- 지금까지 설명한 것은 새 앱을 처음부터 개발할 때 고려해야 할 기능의 몇가지 예일 뿐임.
+
+- 각 문제가 서로 밀접하게 연관되어 있고 익숙하지 않은 문제 영역에 대한 심층적인 전문 지식이 필요할 수 있으므로, 직면하게 될 많은 제약은 해결하기 어려울 수 있음.
+- 이러한 문제를 스스로 해결하고 싶지 않다면, 이러한 기능을 제공하는 프레임워크를 바로 사용할 수 있음.
 
 - [기존 웹사이트의 전체 하위 경로에 React 사용]
+
   - Rails와 같은 다른 서버 기술로 구축 한 기존 웹 앱(example.com)이 있고,
 
   example.com/some-app/로 시작하는 모든 경로를 React로 완전히 구현하고 싶다고 가정해 볼때
+
   - 설정 방법은 다음과 같음.
+
     1. React 기반 프레임워크 중 하나를 사용하여 앱의 React 부분을 빌드함.
 
     2. 프레임워크 설정에서 기본 경로를 /some-app로 지정함.
@@ -26,7 +240,7 @@
   - 이런 방법으로 앱의 React 부분에 해당 프레임워크에 포함된 모범 사례의 장점을 활용할 수 있음.
   - 많은 React기반의 프레임워크는 풀스택이며, React 앱이 서버를 활용할 수 있도록 함.
   - 그러나 서버에서 자바스크립트를 실행할 수 없거나, 실행하고 싶지 않은 경우에도 동일한 접근방식을 사용할 수 있음.
-    -  이 경우에는 HTML/CSS/JS 내보내기를 /some-app/에서 대신 제공하면 됨
+    - 이 경우에는 HTML/CSS/JS 내보내기를 /some-app/에서 대신 제공하면 됨
 
 ### 기존 페이지의 일부분에 React 사용하기
 
@@ -35,12 +249,15 @@
 - 이는 React 컴포넌트를 통합하는 일반적인 방식임.
 - 실제로 수년 동안 Meta에서 대부분의 React 사용을 이런 식으로 하였음.
 - 이 방식은 두 가지 단계로 수행할 수 있음.
-    1. JSX 구문을 사용할 수 있게 자바스크립트 환경을 설정하고, import / export 구문을 통해 코드를 모듈로 분리한 다음, npm 패키지 레지스트리에서 패키지(예시: React)를 사용해야함.
 
-    2. 해당 페이지에서 원하는 위치에 React 컴포넌트를 렌더링함.
+  1. JSX 구문을 사용할 수 있게 자바스크립트 환경을 설정하고, import / export 구문을 통해 코드를 모듈로 분리한 다음, npm 패키지 레지스트리에서 패키지(예시: React)를 사용해야함.
+
+  2. 해당 페이지에서 원하는 위치에 React 컴포넌트를 렌더링함.
+
 - 정확한 접근 방식은 기존 페이지의 설정에 따라 다르기 때문에, 몇 가지 세부 사항을 함께 살펴볼 예정.
 
 [ 1단계 : 모듈 자바스크립트 환경 설정하기 ]
+
 - 모듈 자바스크립트 환경은 모든 코드를 한 파일에 작성하는 것이 아닌, 각각의 React 컴포넌트를 개별 파일로 작성할 수 있게 합니다.
 - 또한(React 자체를 포함한) 다른 개발자들이 npm 레지스트리에 배포한 훌륭한 패키지들을 모두 사용할 수 있습니다.
 
@@ -48,35 +265,37 @@
 
 1. 이미 애플리케이션이 import 문을 이용해 파일로 분리하고 있다면, 기존에 가지고 있는 설정을 이용해 보세요.
 
-  - JS 코드에서 `<div />` 를 작성하면 문법 오류가 발생하는지 확인해보세요.
+- JS 코드에서 `<div />` 를 작성하면 문법 오류가 발생하는지 확인해보세요.
 
-  - 문법 오류가 발생한다면 Babel을 이용한 자바스크립트 코드 변환이 필요할 수 있으며,JSX를 사용하려면 Babel React 프리셋을 활성화해야 할 수도 있습니다.
+- 문법 오류가 발생한다면 Babel을 이용한 자바스크립트 코드 변환이 필요할 수 있으며,JSX를 사용하려면 Babel React 프리셋을 활성화해야 할 수도 있습니다.
 
 2. 애플리케이션이 자바스크립트 모듈을 컴파일하기 위한 기존 설정이 없다면, Vite를 이용하여 설정하세요
-  - Vite 커뮤니티는 Rails, Django, Laravel을 포함한 다양한 백엔드 프레임워크와의 통합을 지원하고 있습니다.
 
-  - 사용 중인 백엔드 프레임워크가 목록에 없다면 가이드를 참고하여 Vite 빌드를 백엔드와 수동으로 통합하세요.
+- Vite 커뮤니티는 Rails, Django, Laravel을 포함한 다양한 백엔드 프레임워크와의 통합을 지원하고 있습니다.
+
+- 사용 중인 백엔드 프레임워크가 목록에 없다면 가이드를 참고하여 Vite 빌드를 백엔드와 수동으로 통합하세요.
 
 - 설정이 제대로 동작하는지 확인하려면 프로젝트 폴더에서 아래 명령어를 실행하세요.
   ```
   npm install react react-dom
   ```
 - 그리고 메인 자바스크립트 파일(index.js 혹은 main.js라는 파일일 수 있습니다.)의 최상단에 다음 코드 라인을 추가하세요.
+
 ```javascript
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 
 // 기존 HTML 컨텐츠를 지웁니다.
 document.body.innerHTML = '<div id="app"></div>';
 
 // 대신에 여러분이 작성한 React 컴포넌트를 렌더링합니다.
-const root = createRoot(document.getElementById('app'));
+const root = createRoot(document.getElementById("app"));
 root.render(<h1>Hello, world</h1>);
-
 ```
+
 - 페이지의 전체 내용이 “Hello, world!”로 바뀌었다면 모든 것이 정상적으로 동작하고 있는 겁니다! 계속해서 읽어보세요.
 
 - 처음으로 기존 프로젝트에 모듈 자바스크립트 환경을 통합하기는 다소 어려워 보일 수 있으나,그만한 가치가 있는 일입니다.
-어렵다면 커뮤니티 리소스나 Vite채팅 이용.
+  어렵다면 커뮤니티 리소스나 Vite채팅 이용.
 
 ## 5월22일(12주차)
 
